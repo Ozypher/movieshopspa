@@ -6,9 +6,9 @@ const routes: Routes = [
   {
     path:"", component: HomeComponent
   },
-  // {
-  //   path:'movies/details/:id', component: MovieDetailsComponent
-  // }
+  {
+    path:"admin", loadChildren:()=> import("./admin/admin.module").then(mod=> mod.AdminModule)
+  }
 ];
 
 @NgModule({
