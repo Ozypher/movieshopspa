@@ -7,12 +7,14 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { HeaderComponent } from './core/layout/header/header.component';
 import { ɵAnimationGroupPlayer } from '@angular/animations';
+import { MovieCardComponent } from './shared/components/movie-card/movie-card.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    HeaderComponent
+    HeaderComponent,
+    MovieCardComponent
   ],
   imports: [
     BrowserModule,
