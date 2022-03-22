@@ -4,11 +4,17 @@ import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
   {
-    path:"", component: HomeComponent
+    path: "", component: HomeComponent
+  },
+
+  {
+    path: "admin", loadChildren: () => import("./admin/admin.module").then(mod => mod.AdminModule)
   },
   {
-    path:"admin", loadChildren:()=> import("./admin/admin.module").then(mod=> mod.AdminModule)
-  }
+    path: "movies", loadChildren: () => import("./movies/movies.module").then(mod => mod.MoviesModule)
+  },
+
+
 ];
 
 @NgModule({
