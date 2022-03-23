@@ -1,0 +1,14 @@
+.rounded-circle{
+    max-width: 40px ;
+    max-height: 40px;
+}
+
+a{
+text-decoration: none;
+color: black
+}
+
+.badge a{
+text-decoration: none;
+color: white;
+}

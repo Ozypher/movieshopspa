@@ -1,31 +1,167 @@
-<div>
+<style>
+    .movieHead{
+    background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url("{{movie.backdropUrl}}");
+    background-size: cover;
+}
+</style>
+<div class="container-fluid movieHead text-white bg-dark" style="background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('{{movie.backdropUrl}}')">
     <div class="row">
-        <div class="col-md-3 offset-2">
-            <div>
-                <img src="{{movie.posterUrl}}" alt="{{movie.title}}" />
-            </div>
-            <div>
-                <h2>
-                    {{movie.title}}
-                </h2>
-            </div>
-
+        <div class="col-2"></div>
+        <div class="col-2">
+            <img src="{{movie.posterUrl}}"alt="{{movie.title}}" class="img-fluid"/>
         </div>
+        <div class="col-1"></div>
+        <div class="col-4">
+            <h2>{{movie.title}}</h2>
+            <p>{{movie.tagline}}</p>
+            <h6>
+                {{movie.runTime}} m | {{movie.releaseDate | date}}
+                    <span class="badge bg-secondary" *ngFor="let item of movie.genres">{{item.name}} </span>
+            </h6>
+            <h5><span class="badge bg-success">{{movie.rating | number}}</span></h5>
+            <h6>{{movie.overview}}</h6>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-2">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#reviewModal" class="btn btn-outline-light">REVIEW</button><br/>
+            <div class="modal fade text-black" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reviewModalLabel">Review</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Leave a Review here:<br/>
+                            <form asp-controller="User" asp-action="ReviewMovie" method="post" id="ReviewForm">
+                                <div class="form-group">
+                                    <input name="MovieId" id="MovieId" class="form-control" readonly="readonly" value="@Model.Id" hidden="hidden"/>
+                                </div>
+                                <div class="form-group">
+                                    <input id="Rating" name="Rating" type="range" value="0" min="0" max="10" oninput="this.nextElementSibling.value = this.value" class="form-control">
+                                    <output>0</output>
+                                </div>
+                                <textarea id="ReviewText" name="ReviewText" rows="4" cols="50" form="ReviewForm"></textarea><br>
+                                <div class="form-group">
+                                    <input class="btn btn-dark btn-primary" type="submit" value="Confirm"/>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @{
+                if ((bool) ViewData["isPurchased"])
+                {
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#purchaseModal" class="btn btn-light">WATCH</button>
+                }
+                else
+                {
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#purchaseModal" class="btn btn-light">BUY $@Model.Price</button>
+                    <div class="modal fade text-black" id="purchaseModal" tabindex="-1" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="purchaseModalLabel">Purchase Confirmation</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to purchase @Model.Title?
+                                    <form asp-controller="User" asp-action="BuyMovie" method="post">
+                                        <div class="form-group">
+                                            <input name="MovieId" id="MovieId" class="form-control" readonly="readonly" value="@Model.Id" hidden="hidden"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <input name="PurchaseNumber" id="PurchaseNumber" class="form-control" readonly="readonly" value="@Guid.NewGuid()" hidden="hidden"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <input name="TotalPrice" id="TotalPrice" class="form-control" readonly="readonly" value="@Model.Price" hidden="hidden"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <input name="PurchaseDateTime" id="PurchaseDateTime" class="form-control" readonly="readonly" value="@DateTime.Today.ToString()" hidden="hidden"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <input class = "btn btn-dark btn-primary" type="submit" value="Confirm"/>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+             @{
+                                            if (!(bool) ViewData["isFavorited"])
+                                            {
+                                                <form asp-controller="User" asp-action="FavoriteMovie" method="post">
+                                                    <div class="form-group">
+                                                        <input name="MovieId" id="MovieId" class="form-control" readonly="readonly" value="@Model.Id" hidden="hidden"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button class = "btn btn-dark" type="submit" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                                                                                                                                                                                                                                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                                                                                                                                                                                                                                                    </svg></button>
+                                                    </div>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                @using (Html.BeginForm("Delete", "User", FormMethod.Post))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    @Html.HiddenFor(model => model.Id)
+            
+                                                    <button class="btn btn-dark" type="submit" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                                                                                                                                                                                                                                            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                                                                                                                                                                                                                                          </svg></button>
+                                                }
+                                                
+                                            }
+                            } -->
+        <!-- </div> -->
     </div>
 </div>
-
-<!--using pipes -->
-
-<h4>
-    Movie Rating:<span class="badge" [ngClass]="{'bg-success': movie.rating >= 9,'bg-secondary':movie.rating > 8 && movie.rating < 9}" >{{movie.rating}}</span>
-</h4>
-
-
-<div>
-    BoxOffice : {{movie.revenue | currency}}
-    <br>
-    Release Date: {{movie.releaseDate | date}}
-    <br>
-    Budget: {{movie.budget | currency}}
-
+<br/>
+<div class="container-fluid movieDetails text-black bg-white">
+    <div class="row">
+        <div class="col-4 movieFacts">
+            <h5>MOVIE FACTS</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Release Date  <span class="badge bg-secondary">{{movie.releaseDate | date}}</span></li>
+                <li class="list-group-item">Run Time  <span class="badge bg-secondary">{{movie.runTime}} m</span></li>
+                <li class="list-group-item">Box Office  <span class="badge bg-secondary">{{movie.revenue | currency}}</span></li>
+                <li class="list-group-item">Budget  <span class="badge bg-secondary">{{movie.budget | currency}}</span></li>
+                <li class="list-group-item"><a href="{{movie.tmdbUrl}}" target="_blank">TMDB Link</a></li>
+                <li class="list-group-item"><a href="{{movie.imdbUrl}}" target="_blank">IMDB Link</a></li>
+                <h6>TRAILERS</h6>
+                    <li class="list-group-item"><a href="{{item.trailerUrl}}" target="_blank" *ngFor="let item of movie.trailers">{{item.name}}</a></li>
+            </ul>
+        </div>
+        <div class="col-8 castTable">
+            <h5>CAST</h5>
+            <ul class="list-group list-group-flush" *ngFor="let item of movie.casts">
+                    <li class="list-group-item"><a href="../../Cast/Details/{{item.id}}">
+                        <div class="row">
+                            <div class="col-2 profile">
+                                <img src={{item.profilePath}} class="rounded-circle" alt="Facial Profile"/>
+                            </div>
+                            <div class="col-5 castName">
+                                {{item.name}}
+                            </div>
+                            <div class="col-5 castCharacter">
+                                {{item.character}}
+                            </div>
+                        </div>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
 </div>
