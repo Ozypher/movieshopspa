@@ -13,6 +13,12 @@ const routes: Routes = [
   {
     path: "movies", loadChildren: () => import("./movies/movies.module").then(mod => mod.MoviesModule)
   },
+  {
+    path: "user", loadChildren: () => import("./user/user.module").then(mod => mod.UserModule)
+  },
+  {
+    path: "account", loadChildren: () => import("./account/account.module").then(mod => mod.AccountModule)
+  }
 
 
 ];
